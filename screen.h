@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: screen.h
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,16 +17,10 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#ifndef GENETIFEX_SCREEN_H
+#define GENETIFEX_SCREEN_H
 
-#include <xcb/xcb.h>
-
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
-
-void die(const char const * message, ...);
+void setup_screen();
 
 #endif
 

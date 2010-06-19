@@ -1,13 +1,16 @@
-PROJECT(genetifex)
+# CMakeLists.txt
 
-FIND_PACKAGE(Qt4 REQUIRED)
+cmake_minimum_required(VERSION 2.6)
 
-INCLUDE(${QT_USE_FILE})
+project(genetifex C)
 
-SET(GenetifexSources main.cpp genetifex.cpp view.cpp scene.cpp)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-QT4_AUTOMOC(${GenetifexSources})
+find_package(XCB REQUIRED)
 
-ADD_EXECUTABLE(genetifex ${GenetifexSources})
+add_executable(genetifex main.c genetifex.c screen.c)
 
-TARGET_LINK_LIBRARIES(genetifex ${QT_LIBRARIES})
+target_link_libraries(genetifex
+    ${XCB_LIBRARIES}
+)
+

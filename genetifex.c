@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: genetifex.c
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,16 +17,28 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-#include <xcb/xcb.h>
+#include "genetifex.h"
 
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
+xcb_connection_t * c;
+xcb_screen_t * screen;
+xcb_window_t window;
 
-void die(const char const * message, ...);
+void __attribute((noreturn)) die(const char const * message, ...)
+{
+    va_list args;
 
-#endif
+    va_start(args, message);
+    fputs("FATAL: ", stderr);
+    vfprintf(stderr, message, args);
+    fputc('\n', stderr);
+    va_end(args);
+
+    cleanup();
+
+    exit(EXIT_FAILURE);
+}
 
