@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: timer.c
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,28 +17,23 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#define _GNU_SOURCE 1
+#include <time.h>
 
-#include <stdbool.h>
-#include <xcb/xcb.h>
+#include "timer.h"
 
-#include "player.h"
+uint64_t update_timer(struct timer * timer)
+{
+    uint64_t elapsed_ticks;
+    struct timespec spec;
 
-extern bool running;
+    clock_gettime(CLOCK_MONOTONIC, &spec);
 
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
+    elapsed_ticks = (spec.tv_sec - timer->spec.tv_sec) * 1000000000 +
+        (spec.tv_nsec - timer->spec.tv_nsec);
 
-extern struct player player;
+    timer->spec = spec;
 
-void die(const char const * message, ...);
-
-void setup();
-void cleanup();
-
-void event_loop();
-
-#endif
+    return elapsed_ticks;
+}
 

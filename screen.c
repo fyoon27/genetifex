@@ -17,6 +17,8 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <xcb/composite.h>
+
 #include "genetifex.h"
 #include "screen.h"
 
@@ -42,11 +44,14 @@ void setup_screen()
 
     mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
     values[0] = screen->white_pixel;
-    values[1] = XCB_EVENT_MASK_EXPOSURE;
+    values[1] = XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+        XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
 
     xcb_create_window(c, XCB_COPY_FROM_PARENT, window, screen->root,
         0, 0, 800, 600, 1, XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual,
         mask, values);
+
+    xcb_composite_redirect_window(c, window, XCB_COMPOSITE_REDIRECT_AUTOMATIC);
 
     xcb_map_window(c, window);
 

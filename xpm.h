@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: xpm.h
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,28 +17,14 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#ifndef GENETIFEX_XPM_H
+#define GENETIFEX_XPM_H
 
 #include <stdbool.h>
 #include <xcb/xcb.h>
 
-#include "player.h"
-
-extern bool running;
-
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
-
-extern struct player player;
-
-void die(const char const * message, ...);
-
-void setup();
-void cleanup();
-
-void event_loop();
+bool load_xpm(const char const * xpm[], xcb_pixmap_t * pixmap, xcb_pixmap_t * mask,
+    uint16_t * width, uint16_t * height);
 
 #endif
 

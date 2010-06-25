@@ -20,25 +20,6 @@
 #include <xcb/xcb.h>
 
 #include "genetifex.h"
-#include "screen.h"
-
-void setup()
-{
-    setup_screen();
-}
-
-void cleanup()
-{
-}
-
-void event_loop()
-{
-    xcb_generic_event_t * event;
-
-    while ((event = xcb_wait_for_event(c)))
-    {
-    }
-}
 
 int main(int argc, char * argv[])
 {

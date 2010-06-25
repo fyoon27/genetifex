@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: clock.h
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,28 +17,20 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#ifndef GENETIFEX_TIMER_H
+#define GENETIFEX_TIMER_H
 
-#include <stdbool.h>
-#include <xcb/xcb.h>
+#include <stdint.h>
 
-#include "player.h"
+struct timer
+{
+    uint64_t ticks;
+    struct timespec spec;
+};
 
-extern bool running;
+void setup_timer(struct timer * timer);
 
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
-
-extern struct player player;
-
-void die(const char const * message, ...);
-
-void setup();
-void cleanup();
-
-void event_loop();
+uint64_t update_timer(struct timer * timer);
 
 #endif
 

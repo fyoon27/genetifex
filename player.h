@@ -1,4 +1,4 @@
-/* genetifex: genetifex.h
+/* genetifex: player.h
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,28 +17,27 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_GENETIFEX_H
-#define GENETIFEX_GENETIFEX_H
+#ifndef GENETIFEX_PLAYER_H
+#define GENETIFEX_PLAYER_H
 
-#include <stdbool.h>
-#include <xcb/xcb.h>
+enum player_jump_state
+{
+    JUMPING
+};
 
-#include "player.h"
+struct player
+{
+    uint16_t x, y;
+    uint16_t width, height;
+    xcb_pixmap_t pixmap;
+    xcb_pixmap_t mask;
+    xcb_gcontext_t gc;
+};
 
-extern bool running;
+void setup_player(struct player * player);
+void cleanup_player(struct player * player);
 
-extern xcb_connection_t * c;
-extern xcb_screen_t * screen;
-extern xcb_window_t window;
-
-extern struct player player;
-
-void die(const char const * message, ...);
-
-void setup();
-void cleanup();
-
-void event_loop();
+void draw_player(struct player * player);
 
 #endif
 
