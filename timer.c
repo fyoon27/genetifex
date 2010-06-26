@@ -19,21 +19,29 @@
 
 #define _GNU_SOURCE 1
 #include <time.h>
+#include <assert.h>
 
 #include "timer.h"
 
-uint64_t update_timer(struct timer * timer)
+void timer_update(struct timer * timer)
 {
-    uint64_t elapsed_ticks;
-    struct timespec spec;
+    assert(timer);
 
-    clock_gettime(CLOCK_MONOTONIC, &spec);
+    clock_gettime(CLOCK_MONOTONIC, &timer->current_spec);
+}
 
-    elapsed_ticks = (spec.tv_sec - timer->spec.tv_sec) * 1000000000 +
-        (spec.tv_nsec - timer->spec.tv_nsec);
+uint64_t timer_elapsed_ticks(struct timer * timer)
+{
+    assert(timer);
 
-    timer->spec = spec;
+    return (timer->current_spec.tv_sec - timer->last_update_spec.tv_sec) * 1000000000 +
+        (timer->current_spec.tv_nsec - timer->last_update_spec.tv_nsec);
+}
 
-    return elapsed_ticks;
+void timer_set_last_update(struct timer * timer)
+{
+    assert(timer);
+
+    timer->last_update_spec = timer->current_spec;
 }
 

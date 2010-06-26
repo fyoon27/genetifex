@@ -35,6 +35,8 @@ xcb_window_t window;
 struct timer timer;
 struct player player;
 
+const uint8_t target_fps = 60;
+
 void __attribute__((noreturn, format (printf, 1, 2))) die(const char const * message, ...)
 {
     va_list args;
@@ -88,7 +90,8 @@ void event_loop()
 
     running = true;
 
-    update_timer(&timer);
+    timer_update(&timer);
+    timer_set_last_update(&timer);
 
     while (running)
     {
@@ -97,11 +100,20 @@ void event_loop()
         if (event)
             handle_event(event);
 
-        ticks = update_timer(&timer);
+        timer_update(&timer);
 
-        update(ticks);
+        ticks = timer_elapsed_ticks(&timer);
 
-        draw();
+        if (ticks > 1000000000 / target_fps)
+        {
+            printf("fps: %u\n", 1000000000 / ticks);
+
+            timer_set_last_update(&timer);
+
+            update(ticks);
+
+            draw();
+        }
 
         xcb_flush(c);
     }

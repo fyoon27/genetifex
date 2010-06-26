@@ -25,12 +25,16 @@
 struct timer
 {
     uint64_t ticks;
-    struct timespec spec;
+    struct timespec last_update_spec;
+    struct timespec current_spec;
 };
 
-void setup_timer(struct timer * timer);
+void timer_update(struct timer * timer);
 
-uint64_t update_timer(struct timer * timer);
+uint64_t timer_elapsed_ticks(struct timer * timer);
+
+void timer_set_last_update(struct timer * timer);
+
 
 #endif
 
