@@ -34,12 +34,16 @@ xcb_connection_t * c;
 xcb_screen_t * screen;
 xcb_window_t window;
 
+xcb_font_t fps_font;
+xcb_gcontext_t fps_gc;
+
 /* Atoms */
 xcb_atom_t WM_PROTOCOLS;
 xcb_atom_t WM_DELETE_WINDOW;
 
 struct timer timer;
 struct player player;
+uint8_t fps;
 
 const uint8_t target_fps = 60;
 
@@ -70,6 +74,29 @@ void draw()
 {
     xcb_clear_area(c, false, window, 0, 0, 800, 600);
     draw_player(&player);
+
+    /* Draw FPS */
+    char fps_string[16];
+    sprintf(fps_string, "%u FPS", fps);
+    uint16_t length = strlen(fps_string);
+    xcb_char2b_t text2b[length];
+    xcb_query_text_extents_cookie_t text_extents_cookie;
+    xcb_query_text_extents_reply_t * text_extents_reply;
+    uint16_t index;
+
+    for (index = 0; index < length; ++index)
+    {
+        text2b[index] = (xcb_char2b_t) { 0, fps_string[index] };
+    }
+
+    text_extents_cookie = xcb_query_text_extents_unchecked(c, fps_font, length, text2b);
+    text_extents_reply = xcb_query_text_extents_reply(c, text_extents_cookie, NULL);
+
+    xcb_image_text_8(c, length, window, fps_gc,
+        800 - text_extents_reply->overall_width - 4, text_extents_reply->overall_ascent + 4,
+        fps_string);
+
+    free(text_extents_reply);
 }
 
 void event_loop()
@@ -98,7 +125,7 @@ void event_loop()
 
         if (ticks > 1000000000 / target_fps)
         {
-            printf("fps: %u\n", 1000000000 / ticks);
+            fps = 1000000000 / ticks;
 
             timer_set_last_update(&timer);
 
@@ -139,6 +166,15 @@ void setup()
     free(atom_reply);
 
     setup_screen();
+
+    fps_font = xcb_generate_id(c);
+    xcb_open_font(c, fps_font, strlen(font_name), font_name);
+
+    fps_gc = xcb_generate_id(c);
+    xcb_create_gc(c, fps_gc, window,
+        XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FONT,
+        (uint32_t[]){ screen->black_pixel, screen->white_pixel, fps_font });
+
     setup_player(&player);
 }
 
