@@ -43,6 +43,16 @@ static void key_release(xcb_key_press_event_t * event)
     }
 }
 
+static void client_message(xcb_client_message_event_t * event)
+{
+    printf("client messsage\n");
+
+    if (event->type == WM_PROTOCOLS && event->data.data32[0] == WM_DELETE_WINDOW)
+    {
+        running = false;
+    }
+}
+
 void handle_event(xcb_generic_event_t * event)
 {
     switch (event->response_type & ~0x80)
@@ -52,6 +62,9 @@ void handle_event(xcb_generic_event_t * event)
             break;
         case XCB_KEY_RELEASE:
             key_release((xcb_key_press_event_t *) event);
+            break;
+        case XCB_CLIENT_MESSAGE:
+            client_message((xcb_client_message_event_t *) event);
             break;
         case XCB_NO_EXPOSURE:
             break;

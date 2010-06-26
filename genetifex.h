@@ -31,6 +31,10 @@ extern xcb_connection_t * c;
 extern xcb_screen_t * screen;
 extern xcb_window_t window;
 
+/* Atoms */
+extern xcb_atom_t WM_PROTOCOLS;
+extern xcb_atom_t WM_DELETE_WINDOW;
+
 extern struct player player;
 
 void die(const char const * message, ...);

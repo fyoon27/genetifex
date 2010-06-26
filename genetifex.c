@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include <xcb/composite.h>
 
 #include "genetifex.h"
@@ -32,6 +33,10 @@ bool running;
 xcb_connection_t * c;
 xcb_screen_t * screen;
 xcb_window_t window;
+
+/* Atoms */
+xcb_atom_t WM_PROTOCOLS;
+xcb_atom_t WM_DELETE_WINDOW;
 
 struct timer timer;
 struct player player;
@@ -108,6 +113,31 @@ void event_loop()
 
 void setup()
 {
+    const xcb_setup_t * setup;
+    xcb_screen_iterator_t screen_iterator;
+    xcb_intern_atom_cookie_t atom_cookies[2];
+    xcb_intern_atom_reply_t * atom_reply;
+    const char font_name[] = "-*-*-*-*-*-*-18-*-*-*-*-*-*-*";
+
+    c = xcb_connect(NULL, NULL);
+
+    if (xcb_connection_has_error(c))
+        die("Could not open display");
+
+    setup = xcb_get_setup(c);
+    screen_iterator = xcb_setup_roots_iterator(setup);
+    screen = screen_iterator.data;
+
+    atom_cookies[0] = xcb_intern_atom(c, false, strlen("WM_PROTOCOLS"), "WM_PROTOCOLS");
+    atom_cookies[1] = xcb_intern_atom(c, false, strlen("WM_DELETE_WINDOW"), "WM_DELETE_WINDOW");
+
+    atom_reply = xcb_intern_atom_reply(c, atom_cookies[0], NULL);
+    WM_PROTOCOLS = atom_reply->atom;
+    free(atom_reply);
+    atom_reply = xcb_intern_atom_reply(c, atom_cookies[1], NULL);
+    WM_DELETE_WINDOW = atom_reply->atom;
+    free(atom_reply);
+
     setup_screen();
     setup_player(&player);
 }

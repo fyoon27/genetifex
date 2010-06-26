@@ -24,32 +24,18 @@
 
 void setup_screen()
 {
-    const xcb_setup_t * setup;
-    xcb_screen_iterator_t screen_iterator;
-    uint32_t mask;
-    uint32_t values[2];
-
-    c = xcb_connect(NULL, NULL);
-
-    if (xcb_connection_has_error(c))
-        die("Could not open display");
-
-    setup = xcb_get_setup(c);
-
-    screen_iterator = xcb_setup_roots_iterator(setup);
-
-    screen = screen_iterator.data;
-
     window = xcb_generate_id(c);
-
-    mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-    values[0] = screen->white_pixel;
-    values[1] = XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
-        XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
 
     xcb_create_window(c, XCB_COPY_FROM_PARENT, window, screen->root,
         0, 0, 800, 600, 1, XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual,
-        mask, values);
+        XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
+        (uint32_t[]){ screen->white_pixel,
+            XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE |
+            XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+            XCB_EVENT_MASK_FOCUS_CHANGE });
+
+    xcb_change_property(c, XCB_PROP_MODE_REPLACE, window, WM_PROTOCOLS,
+        XCB_ATOM_ATOM, 32, 1, (uint32_t[]){ WM_DELETE_WINDOW });
 
     xcb_composite_redirect_window(c, window, XCB_COMPOSITE_REDIRECT_AUTOMATIC);
 
