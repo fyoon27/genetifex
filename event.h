@@ -1,4 +1,4 @@
-/* genetifex: player.h
+/* genetifex: event.h
  *
  * Copyright (c) 2010 Michael Forney <mforney@mforney.org>
  *
@@ -17,36 +17,12 @@
  * genetifex.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENETIFEX_PLAYER_H
-#define GENETIFEX_PLAYER_H
+#ifndef GENETIFEX_EVENT_H
+#define GENETIFEX_EVENT_H
 
-enum player_jump_state
-{
-    JUMPING
-};
+#include <xcb/xcb.h>
 
-enum player_moving_direction
-{
-    MOVING_NONE,
-    MOVING_LEFT,
-    MOVING_RIGHT
-};
-
-struct player
-{
-    uint16_t x, y;
-    uint16_t width, height;
-    xcb_pixmap_t pixmap;
-    xcb_pixmap_t mask;
-    xcb_gcontext_t gc;
-
-    enum player_moving_direction moving_direction;
-};
-
-void setup_player(struct player * player);
-void cleanup_player(struct player * player);
-
-void draw_player(struct player * player);
+void handle_event(xcb_generic_event_t * event);
 
 #endif
 

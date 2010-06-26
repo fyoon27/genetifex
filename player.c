@@ -36,6 +36,8 @@ void setup_player(struct player * player)
     player->gc = xcb_generate_id(c);
 
     xcb_create_gc(c, player->gc, window, XCB_GC_CLIP_MASK, (uint32_t[]){ player->mask });
+
+    player->moving_direction = MOVING_NONE;
 }
 
 void cleanup_player(struct player * player)

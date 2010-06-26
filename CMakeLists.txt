@@ -20,6 +20,7 @@ add_executable(genetifex
     player.c
     xpm.c
     timer.c
+    event.c
 )
 
 target_link_libraries(genetifex

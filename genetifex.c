@@ -25,6 +25,7 @@
 #include "genetifex.h"
 #include "screen.h"
 #include "timer.h"
+#include "event.h"
 
 bool running;
 
@@ -52,29 +53,12 @@ void __attribute__((noreturn, format (printf, 1, 2))) die(const char const * mes
     exit(EXIT_FAILURE);
 }
 
-void handle_event(xcb_generic_event_t * event)
-{
-    switch (event->response_type & ~0x80)
-    {
-        case XCB_KEY_PRESS:
-            break;
-        case XCB_KEY_RELEASE:
-            break;
-        case XCB_NO_EXPOSURE:
-            break;
-        default:
-            printf("unhandled event: %u\n", event->response_type & ~0x80);
-    }
-
-    free(event);
-}
-
 void update(uint64_t ticks)
 {
-    printf("fps: %u\n", 1000000000 / ticks);
-    if (ticks / 5000000)
-        printf("ticks: %u\n", ticks / 5000000);
-    player.y += ticks / 5000000;
+    if (player.moving_direction == MOVING_RIGHT)
+        player.x += ticks / 5000000;
+    else if (player.moving_direction == MOVING_LEFT)
+        player.x -= ticks / 5000000;
 }
 
 void draw()
@@ -98,7 +82,10 @@ void event_loop()
         event = xcb_poll_for_event(c);
 
         if (event)
+        {
             handle_event(event);
+            free(event);
+        }
 
         timer_update(&timer);
 
